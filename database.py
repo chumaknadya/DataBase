@@ -1,6 +1,7 @@
 import os
 
 import psycopg2
+import psycopg2.extras
 from config import config
 
 class Database(object):
@@ -22,14 +23,17 @@ class Database(object):
             self.conn.close()
             print('Database connection closed.')
 
-    # def exec_script_file(self, script_file_name: str) -> None:
-    #     script_file = open('{0}\scripts\{1}'.format(os.path.dirname(__file__), script_file_name), 'r')
-    #     with self.get_cursor() as cur:
-    #         cur.execute(script_file.read())
-    #         self.conn.commit()
+    def exec_sql(self, sql: str) -> None:
+        script_file = open('{0}/src/sql/{1}'.format(os.path.dirname(__file__), sql), 'r')
+        with self.get_cursor() as cur:
+            cur.execute(script_file.read())
+            self.conn.commit()
 
     def get_cursor(self):
         return self.conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
-
+if __name__ == "__main__":
+  db = Database()
+  db.connect()
+  db.exec_sql("drop.sql")
 
